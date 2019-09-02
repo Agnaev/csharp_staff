@@ -53,7 +53,7 @@ namespace ConsoleApp
             if (list.Count == 2 && list[0] > list[1])
                 return Swap(list, 0, 1);
 
-            if (list.Count == 2 || list.Count == 1)
+            if (list.Count == 2 || list.Count == 1 || list.Count == 0)
                 return list;
 
             int half = list.Count / 2;
