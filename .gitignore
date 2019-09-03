@@ -1,3 +1,5 @@
 ﻿/.vs/
 /Debug/
 /obj/
+/bin/
+/*.config
