@@ -8,116 +8,190 @@ namespace ConsoleApp
 {
     class Sorts
     {
-        public static List<int> Selection(List<int> arr)
+        public static List<T> Selection<T>(List<T> list)
         {
-            var indexMax = arr.Count;
-            for(int i = 0; i < arr.Count; i++)
+            try
             {
-                var max = GetIndexOfMax(arr, indexMax);
-                Swap(arr, indexMax - 1, max);
-                indexMax--;
+                var indexMax = list.Count;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    var max = GetIndexOfMax(list, indexMax);
+                    Swap(list, indexMax - 1, max);
+                    indexMax--;
+                }
+                return list;
             }
-            return arr;
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
 
-        public static List<int> Bubble(List<int> arr)
+        public static List<T> Bubble<T>(List<T> list)
         {
-            for(int i = 0; i < arr.Count; i++)
+            try
             {
-                for(int j = arr.Count - 1; j > i; j--)
+                for (int i = 0; i < list.Count; i++)
                 {
-                    if(arr[j] <= arr[j - 1])
+                    for (int j = list.Count - 1; j > i; j--)
                     {
-                        Swap(arr, j, j - 1);
+                        if (Comparer<T>.Default.Compare(list[j], list[j - 1]) <= 0)
+                        {
+                            Swap(list, j, j - 1);
+                        }
                     }
                 }
-            }
-            return arr;
-        }
-
-        public static List<int> Insertion(List<int> arr)
-        {
-            for(int j = 1; j < arr.Count; j++)
-            {
-                for(int i = j - 1, key = arr[j]; i >= 0 && arr[i] > key; i--)
-                {
-                    arr[i + 1] = arr[i];
-                    arr[i] = key;
-                }
-            }
-            return arr;
-        }
-
-        public static List<int> MergeSort(List<int> list)
-        {
-            if (list.Count == 2 && list[0] > list[1])
-                return Swap(list, 0, 1);
-
-            if (list.Count == 2 || list.Count == 1 || list.Count == 0)
                 return list;
-
-            int half = list.Count / 2;
-            List<int> firstHalf = list.Take(half).ToList(),
-                secondHalf = list.Skip(half).Take(list.Count - half).ToList();
-
-            MergeSort(firstHalf);
-            MergeSort(secondHalf);
-
-            list.Clear();
-            for (int i = 0, j = 0; i < firstHalf.Count || j < secondHalf.Count;)
-            {
-                (int, int) minFirst = firstHalf.Count != 0 ? GetMin(firstHalf) : (int.MaxValue, int.MaxValue);
-                (int, int) minSecond = secondHalf.Count != 0 ? GetMin(secondHalf) : (int.MaxValue, int.MaxValue);
-                if (minFirst.Item2 < minSecond.Item2)
-                {
-                    list.Add(minFirst.Item2);
-                    firstHalf.RemoveAt(minFirst.Item1);
-                }
-                else
-                {
-                    list.Add(minSecond.Item2);
-                    secondHalf.RemoveAt(minSecond.Item1);
-                }
             }
-            return list;
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
 
+        public static List<T> Insertion<T>(List<T> list)
+        {
+            try
+            {
+                for (int j = 1; j < list.Count; j++)
+                {
+                    T key = list[j];
+                    for (int i = j - 1; i >= 0 && Comparer<T>.Default.Compare(list[i], key) >= 0; i--)
+                    {
+                        list[i + 1] = list[i];
+                        list[i] = key;
+                    }
+                }
+                return list;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        public static List<T> MergeSort<T>(List<T> list)
+        {
+            try
+            {
+                if (list.Count == 2 && Comparer<T>.Default.Compare(list[0], list[1]) >= 1)
+                    return Swap<T>(list, 0, 1);
+
+                if (list.Count == 2 || list.Count == 1 || list.Count == 0)
+                    return list;
+
+                int half = list.Count / 2;
+                List<T> firstHalf = list.Take(half).ToList(),
+                    secondHalf = list.Skip(half).Take(list.Count - half).ToList();
+
+                MergeSort<T>(firstHalf);
+                MergeSort<T>(secondHalf);
+
+                T stub = list.Max();
+                list.Clear();
+                for (int i = 0, j = 0; i < firstHalf.Count || j < secondHalf.Count;)
+                {
+                    (int, T) minFirst = firstHalf.Count != 0 ? GetMin<T>(firstHalf) : (int.MaxValue, stub);
+                    (int, T) minSecond = secondHalf.Count != 0 ? GetMin<T>(secondHalf) : (int.MaxValue, stub);
+                    if (Compare<T>(minFirst.Item2, minSecond.Item2))
+                    {
+                        list.Add(minFirst.Item2);
+                        firstHalf.RemoveAt(minFirst.Item1);
+                    }
+                    else
+                    {
+                        list.Add(minSecond.Item2);
+                        secondHalf.RemoveAt(minSecond.Item1);
+                    }
+                }
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
 
         #region private helpers
-
-        private static(int, int) GetMin(List<int> list)
+        private static bool Compare<T>(T a, T b)
         {
-            var result = (0, 0);//index, value
-            result.Item2 = list.Min();
-            result.Item1 = list.IndexOf(result.Item2);
-            return result;
+            try
+            {
+                return Comparer<T>.Default.Compare(a, b) < 0;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return false;
+            }
         }
 
-        
-        private static int GetIndexOfMax(List<int> arr) => GetIndexOfMax(arr, arr.Count);
-        private static int GetIndexOfMax(List<int> arr, int indexOfMax)
+        private static (int, T) GetMin<T>(List<T> list)
         {
-            (int, int) max = (arr.ElementAt(0), 0);
-            for(int i = 1; i < indexOfMax; i++)
+            try
             {
-                max = arr[i] > max.Item1 ? (arr.ElementAt(i), i) : max;
+                (int, T) result;
+                result.Item2 = list.Min<T>();
+                result.Item1 = list.IndexOf(result.Item2);
+                return result;
             }
-            return max.Item2;
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return (-1, list[0]);
+            }
+        }
+
+        private static int GetIndexOfMax<T>(List<T> list, int count)
+        {
+            try
+            {
+                (T, int) max = (list.ElementAt(0), 0);
+                for (int i = 0; i < count; i++)
+                {
+                    max = Comparer<T>.Default.Compare(list[i], max.Item1) >= 0 ? (list[i], i) : max;
+                }
+                return max.Item2;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return -1;
+            }
         }
 
         private void Swap<T>(ref T a, ref T b)
         {
-            T tmp = a;
-            a = b;
-            b = tmp;
+            try
+            {
+                T tmp = a;
+                a = b;
+                b = tmp;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         private static List<T> Swap<T>(List<T> arr, int a, int b)
         {
-            var tmp = arr[a];
-            arr[a] = arr[b];
-            arr[b] = tmp;
-            return arr;
+            try
+            {
+                var tmp = arr[a];
+                arr[a] = arr[b];
+                arr[b] = tmp;
+                return arr;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
         }
         #endregion
     }
