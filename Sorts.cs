@@ -14,11 +14,7 @@ namespace ConsoleApp
             {
                 var indexMax = list.Count;
                 for (int i = 0; i < list.Count; i++)
-                {
-                    var max = GetIndexOfMax(list, indexMax);
-                    Swap(list, indexMax - 1, max);
-                    indexMax--;
-                }
+                    Swap(list, indexMax - 1, GetIndexOfMax(list, indexMax--));
                 return list;
             }
             catch(Exception e)
@@ -33,15 +29,9 @@ namespace ConsoleApp
             try
             {
                 for (int i = 0; i < list.Count; i++)
-                {
                     for (int j = list.Count - 1; j > i; j--)
-                    {
                         if (Comparer<T>.Default.Compare(list[j], list[j - 1]) <= 0)
-                        {
                             Swap(list, j, j - 1);
-                        }
-                    }
-                }
                 return list;
             }
             catch(Exception e)

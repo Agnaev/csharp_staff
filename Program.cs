@@ -78,12 +78,12 @@ namespace ConsoleApp
             }*/
             #endregion
 
-            List<int> nums = new List<int>() { 1, 5, 3, 6, 9, 3 , 2, 1, 8, 6, 10, 7 };
+            List<int> nums = new List<int>() { 4, 1, 5, 3, 6, 9, 3 , 2, 1, 8, 6, 10, 7 };
 
             nums.ForEach(x => Console.Write(x + " "));
             Console.WriteLine();
 
-            Sorts.MergeSort(nums);
+            Sorts.Selection(nums);
 
             nums.ForEach(x => Console.Write(x + " "));
             Console.WriteLine();
