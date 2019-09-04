@@ -110,7 +110,7 @@ namespace ConsoleApp
         {
             try
             {
-                if (list.Count == 2 && Compare<T>(list[0], list[1]  ))
+                if (list.Count == 2 && Compare<T>(list[1], list[0]  ))
                 {
                     Swap(list, 0, 1);
                     return list;

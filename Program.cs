@@ -11,7 +11,7 @@ namespace ConsoleApp
 {
     class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             #region Determinant
             /*
@@ -78,17 +78,53 @@ namespace ConsoleApp
             }*/
             #endregion
 
-            List<int> nums = new List<int>() { 4, 1, 5, 3, 6, 9, 3 , 2, 1, 8, 6, 10, 7 };
+            //List<int> nums = new List<int>() { 4, 1, 5, 3, 6, 9, 3 , 2, 1, 8, 6, 10, 7 };
+            List<MyCustomClass> nums = new List<MyCustomClass>() { new MyCustomClass(1), new MyCustomClass(6), new MyCustomClass(2), new MyCustomClass(9), new MyCustomClass(7)};
 
-            nums.ForEach(x => Console.Write(x + " "));
+            nums.ForEach(x => Console.Write(x.A + " "));
             Console.WriteLine();
 
             Sorts.QuickSort(nums);
 
-            nums.ForEach(x => Console.Write(x + " "));
+            nums.ForEach(x => Console.Write(x.A + " "));
             Console.WriteLine();
 
             Console.ReadKey();
+        }
+
+        class MyCustomClass: IComparable
+        {
+            public int A { get; private set; }
+            public MyCustomClass(int A)
+            {
+                this.A = A;
+            }
+
+            public static bool operator <(MyCustomClass a, MyCustomClass b)
+            {
+                return a.A < b.A;
+            }
+
+            public static bool operator >(MyCustomClass a, MyCustomClass b)
+            {
+                return a.A > b.A;
+            }
+
+            public int CompareTo(object o)
+            {
+                try
+                {
+                    if (o is MyCustomClass a)
+                        return this.A.CompareTo(a.A);
+                    else
+                        throw new Exception("Невозможно сравнить два объекта.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return 0;
+                }
+            }
         }
     }
 }
