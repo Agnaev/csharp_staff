@@ -83,7 +83,7 @@ namespace ConsoleApp
             nums.ForEach(x => Console.Write(x + " "));
             Console.WriteLine();
 
-            Sorts.Selection(nums);
+            Sorts.QuickSort(nums);
 
             nums.ForEach(x => Console.Write(x + " "));
             Console.WriteLine();

@@ -106,6 +106,48 @@ namespace ConsoleApp
             }
         }
 
+        public static List<T> QuickSort<T>(List<T> list)
+        {
+            try
+            {
+                if (list.Count == 2 && Compare<T>(list[0], list[1]  ))
+                {
+                    Swap(list, 0, 1);
+                    return list;
+                }
+
+                if (list.Count == 0 || list.Count == 1 || list.Count == 2)
+                    return list;
+
+                T pivot = list[list.Count / 2];
+                List<T> firstHalf = new List<T>(),
+                    secondHalf = new List<T>();
+                for(int i = 0; i < list.Count; i++)
+                {
+                    if(i != list.Count / 2)
+                        if(Compare<T>(list[i], pivot))//list[i] < pivot)
+                            firstHalf.Add(list[i]);
+                        else
+                            secondHalf.Add(list[i]);
+                }
+
+                QuickSort(firstHalf);
+                QuickSort(secondHalf);
+
+                list.Clear();
+                firstHalf.ForEach(elem => list.Add(elem));
+                list.Add(pivot);
+                secondHalf.ForEach(elem => list.Add(elem));
+
+                return list;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
         #region private helpers
         private static bool Compare<T>(T a, T b)
         {
