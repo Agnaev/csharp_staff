@@ -110,11 +110,8 @@ namespace ConsoleApp
         {
             try
             {
-                if (list.Count == 2 && Compare<T>(list[1], list[0]  ))
-                {
-                    Swap(list, 0, 1);
-                    return list;
-                }
+                if (list.Count == 2 && Compare<T>(list[1], list[0]))
+                    return Swap(list, 0, 1);
 
                 if (list.Count == 0 || list.Count == 1 || list.Count == 2)
                     return list;
@@ -123,13 +120,11 @@ namespace ConsoleApp
                 List<T> firstHalf = new List<T>(),
                     secondHalf = new List<T>();
                 for(int i = 0; i < list.Count; i++)
-                {
                     if(i != list.Count / 2)
-                        if(Compare<T>(list[i], pivot))//list[i] < pivot)
+                        if (Compare<T>(list[i], pivot))
                             firstHalf.Add(list[i]);
                         else
                             secondHalf.Add(list[i]);
-                }
 
                 QuickSort(firstHalf);
                 QuickSort(secondHalf);
