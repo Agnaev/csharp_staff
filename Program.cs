@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
 using Npgsql;
+using System.Numerics;
 
 namespace ConsoleApp
 {
@@ -79,16 +80,18 @@ namespace ConsoleApp
             #endregion
 
             //List<int> nums = new List<int>() { 4, 1, 5, 3, 6, 9, 3 , 2, 1, 8, 6, 10, 7 };
-            List<MyCustomClass> nums = new List<MyCustomClass>() { new MyCustomClass(1), new MyCustomClass(6), new MyCustomClass(2), new MyCustomClass(9), new MyCustomClass(7)};
+            //List<MyCustomClass> nums = new List<MyCustomClass>() { new MyCustomClass(1), new MyCustomClass(6), new MyCustomClass(2), new MyCustomClass(9), new MyCustomClass(7)};
 
-            nums.ForEach(x => Console.Write(x.A + " "));
-            Console.WriteLine();
+            //nums.ForEach(x => Console.Write(x.A + " "));
+            //Console.WriteLine();
 
-            Sorts.QuickSort(nums);
+            //Sorts.QuickSort(nums);
 
-            nums.ForEach(x => Console.Write(x.A + " "));
-            Console.WriteLine();
+            //nums.ForEach(x => Console.Write(x.A + " "));
+            //Console.WriteLine();
 
+            MultipleMatrices multiple = new MultipleMatrices();
+            multiple.UnitMatrix<int>(5).ForEach(x => x.ForEach(y => Console.Write(y)));
             Console.ReadKey();
         }
 

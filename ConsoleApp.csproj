@@ -73,6 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Determinant.cs" />
+    <Compile Include="MultipleMatrices.cs" />
+    <Compile Include="Neural_network.cs" />
+    <Compile Include="Pi.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sorts.cs" />
