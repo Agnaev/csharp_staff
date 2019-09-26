@@ -15,22 +15,22 @@ namespace ConsoleApp
         public static void Main(string[] args)
         {
             #region Determinant
-            /*
-             int [,]a = new int[3, 3];
-            a[0, 0] = 2;
-            a[0, 1] = 4;
-            a[0, 2] = 3;
-            a[1, 0] = 5;
-            a[1, 1] = 7;
-            a[1, 2] = 8;
-            a[2, 0] = 6;
-            a[2, 1] = 9;
-            a[2, 2] = 1;
-            Determinant det = new Determinant(a);
-            det.PrintMatr(a);
-            det.Calculate();
-            Console.WriteLine(det.Det);
-             */
+
+            //int[,] a = new int[3, 3];
+            //a[0, 0] = 2;
+            //a[0, 1] = 4;
+            //a[0, 2] = 3;
+            //a[1, 0] = 5;
+            //a[1, 1] = 7;
+            //a[1, 2] = 8;
+            //a[2, 0] = 6;
+            //a[2, 1] = 9;
+            //a[2, 2] = 1;
+            //Determinant det = new Determinant(a);
+            //det.PrintMatr(a);
+            //det.Calculate();
+            //Console.WriteLine(det.Det);
+
             #endregion
 
             #region connect to db
@@ -90,8 +90,11 @@ namespace ConsoleApp
             //nums.ForEach(x => Console.Write(x.A + " "));
             //Console.WriteLine();
 
-            MultipleMatrices multiple = new MultipleMatrices();
-            multiple.UnitMatrix<int>(5).ForEach(x => x.ForEach(y => Console.Write(y)));
+            //MultipleMatrices multiple = new MultipleMatrices();
+            //multiple.UnitMatrix<int>(5).ForEach(x => x.ForEach(y => Console.Write(y)));
+
+            Neural_network.Training();
+
             Console.ReadKey();
         }
 

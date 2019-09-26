@@ -68,7 +68,7 @@ namespace ConsoleApp
             try
             {
                 if (list.Count == 2 && Comparer<T>.Default.Compare(list[0], list[1]) >= 1)
-                    return Swap<T>(list, 0, 1);
+                    return Swap(list, 0, 1);
 
                 if (list.Count == 2 || list.Count == 1 || list.Count == 0)
                     return list;
@@ -77,8 +77,8 @@ namespace ConsoleApp
                 List<T> firstHalf = list.Take(half).ToList(),
                     secondHalf = list.Skip(half).Take(list.Count - half).ToList();
 
-                MergeSort<T>(firstHalf);
-                MergeSort<T>(secondHalf);
+                MergeSort(firstHalf);
+                MergeSort(secondHalf);
 
                 T stub = list.Max();
                 list.Clear();
@@ -86,7 +86,7 @@ namespace ConsoleApp
                 {
                     (int, T) minFirst = firstHalf.Count != 0 ? GetMin<T>(firstHalf) : (int.MaxValue, stub);
                     (int, T) minSecond = secondHalf.Count != 0 ? GetMin<T>(secondHalf) : (int.MaxValue, stub);
-                    if (Compare<T>(minFirst.Item2, minSecond.Item2))
+                    if (Compare(minFirst.Item2, minSecond.Item2))
                     {
                         list.Add(minFirst.Item2);
                         firstHalf.RemoveAt(minFirst.Item1);
@@ -119,20 +119,28 @@ namespace ConsoleApp
                 T pivot = list[list.Count / 2];
                 List<T> firstHalf = new List<T>(),
                     secondHalf = new List<T>();
-                for(int i = 0; i < list.Count; i++)
-                    if(i != list.Count / 2)
-                        if (Compare<T>(list[i], pivot))
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (i != list.Count / 2)
+                    {
+                        if (Compare(list[i], pivot))
+                        {
                             firstHalf.Add(list[i]);
+                        }
                         else
+                        {
                             secondHalf.Add(list[i]);
+                        }
+                    }
+                }
 
                 QuickSort(firstHalf);
                 QuickSort(secondHalf);
 
                 list.Clear();
-                firstHalf.ForEach(elem => list.Add(elem));
+                list.AddRange(firstHalf);
                 list.Add(pivot);
-                secondHalf.ForEach(elem => list.Add(elem));
+                list.AddRange(secondHalf);
 
                 return list;
             }
