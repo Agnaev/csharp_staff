@@ -11,7 +11,7 @@ namespace ConsoleApp
 {
     class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
             #region Determinant
             /*
@@ -79,7 +79,7 @@ namespace ConsoleApp
             #endregion
 
             //List<int> nums = new List<int>() { 4, 1, 5, 3, 6, 9, 3 , 2, 1, 8, 6, 10, 7 };
-            List<MyCustomClass> nums = new List<MyCustomClass>() { new MyCustomClass(1), new MyCustomClass(6), new MyCustomClass(2), new MyCustomClass(9), new MyCustomClass(7)};
+            List<MyCustomClass> nums = new List<MyCustomClass>() { new MyCustomClass(1), new MyCustomClass(6), new MyCustomClass(2), new MyCustomClass(9), new MyCustomClass(7) };
 
             nums.ForEach(x => Console.Write(x.A + " "));
             Console.WriteLine();
@@ -92,7 +92,8 @@ namespace ConsoleApp
             Console.ReadKey();
         }
 
-        class MyCustomClass: IComparable
+
+        class MyCustomClass : IComparable
         {
             public int A { get; private set; }
             public MyCustomClass(int A)

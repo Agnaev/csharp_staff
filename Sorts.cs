@@ -135,9 +135,9 @@ namespace ConsoleApp
                 QuickSort(secondHalf);
 
                 list.Clear();
-                firstHalf.ForEach(elem => list.Add(elem));
+                list.AddRange(firstHalf);
                 list.Add(pivot);
-                secondHalf.ForEach(elem => list.Add(elem));
+                list.AddRange(secondHalf);
 
                 return list;
             }

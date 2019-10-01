@@ -18,6 +18,21 @@ namespace ConsoleApp
             return m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0];
         }
 
+        private int TwoByTwo(List<List<int>> m)
+        {
+            try
+            {
+                if (m.Count != 2 || m[0].Count != 0)
+                    throw new Exception("Uncorrect matrix");
+                return m[0][0] * m[1][1] - m[0][1] * m[1][0];
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return -1;
+            }
+        }
+
         private void GetMatr(int[,] mas, ref int[,] p, int i, int j, int m = 0)
         {
             int di = 0, dj = 0;
