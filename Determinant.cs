@@ -46,14 +46,15 @@ namespace ConsoleApp
             }
         }
 
-        public void PrintMatr(int[,] mas, int m = 0)
+        public void PrintMatr<T>(T[,] mas, int m = 0)
         {
             m = m == 0 ? mas.GetLength(0) : m;
-            int i, j;
-            for (i = 0; i < m; i++)
+            for (int i = 0; i < m; i++)
             {
-                for (j = 0; j < m; j++)
-                    Console.Write(mas[i, j] + " ");
+                for (int j = 0; j < m; j++)
+                {
+                    Console.Write(j + " ");
+                }
                 Console.WriteLine();
             }
         }
@@ -93,17 +94,17 @@ namespace ConsoleApp
 
         public int Calculate()
         {
-            if(this.Matrix.GetLength(0) != this.Matrix.GetLength(1))
+            if(Matrix.GetLength(0) != Matrix.GetLength(1))
             {
                 throw new Exception("Матрица не может быть не квадратной");
             }
-            else if(this.Matrix.GetLength(0) == 0)
+            else if(Matrix.GetLength(0) == 0)
             {
                 throw new Exception("Empty matrix");
             }
             
-            this.Det = Processing(this.Matrix);
-            return this.Det;
+            Det = Processing(Matrix);
+            return Det;
         }
     }
 }
