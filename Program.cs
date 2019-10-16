@@ -8,6 +8,8 @@ using System.IO;
 using Npgsql;
 using System.Numerics;
 
+using Newtonsoft.Json;
+
 namespace ConsoleApp
 {
     class Program
@@ -93,7 +95,15 @@ namespace ConsoleApp
             //MultipleMatrices multiple = new MultipleMatrices();
             //multiple.UnitMatrix<int>(5).ForEach(x => x.ForEach(y => Console.Write(y)));
 
-            Neural_network.Training();
+            //Neural_network.Training();
+            MyWebRequest myRequest = new MyWebRequest("https://opendata.trudvsem.ru/api/v1/vacancies?offset=1&limit=100", "GET");
+            string content = myRequest.GetResponse();
+            Console.WriteLine(content);
+
+            //foreach(var vac in result)
+            //{
+            //    Console.WriteLine($"{vac.Id}");
+            //}
 
             Console.ReadKey();
         }
@@ -134,4 +144,7 @@ namespace ConsoleApp
             }
         }
     }
+
+   
+   
 }
