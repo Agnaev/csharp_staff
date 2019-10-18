@@ -9,11 +9,63 @@ using Npgsql;
 using System.Numerics;
 
 using Newtonsoft.Json;
+using RestSharp;
 
 namespace ConsoleApp
 {
     class Program
     {
+        static List<string> vs= new List<string>();
+        static void Func()
+        {
+            string res = "";
+            RestClient client = new RestClient("https://localhost:44312/run/423b7b93-953f-47f9-b219-7154668bfac2");
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Postman-Token", "a39e65b1-0ee3-4e54-9826-22bd3189a0b1");
+            request.AddHeader("cache-control", "no-cache");
+            IRestResponse response = client.Execute(request);
+            //Console.WriteLine(response.Content);
+
+            client = new RestClient("https://localhost:44312/run/423b7b93-953f-47f9-b219-7154668bfac2");
+            request = new RestRequest(Method.POST);
+            request.AddHeader("Postman-Token", "a39e65b1-0ee3-4e54-9826-22bd3189a0b1");
+            request.AddHeader("cache-control", "no-cache");
+            response = client.Execute(request);
+
+            var item = response.Cookies.FirstOrDefault(x => x.Name == "passing_423b7b93-953f-47f9-b219-7154668bfac2");
+            
+            if (item != null)
+            {
+                vs.Add(item.Value);
+                var index = response.Cookies.IndexOf(item);
+                var d = response.Cookies[index].Value;
+                //Console.WriteLine(response.Content);
+
+
+                client = new RestClient("https://localhost:44312/api/run/savequestionnairedata");
+                request = new RestRequest(Method.POST);
+                request.AddHeader("Postman-Token", "a289fff9-af3b-4b3b-a3da-36a67daf7e47");
+                request.AddHeader("cache-control", "no-cache");
+                request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+                request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"respondentId\"\r\n\r\n" + d + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+                response = client.Execute(request);
+
+
+                client = new RestClient("https://localhost:44312/api/finish");
+                request = new RestRequest(Method.POST);
+                request.AddHeader("Postman-Token", "8f2ad81e-9003-4679-b1d4-509778a7cabf");
+                request.AddHeader("cache-control", "no-cache");
+                request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
+                request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"respondentId\"\r\n\r\n" + d + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"questionnaireId\"\r\n\r\n423b7b93-953f-47f9-b219-7154668bfac2\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"endType\"\r\n\r\nend\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
+                response = client.Execute(request);
+                Console.WriteLine(response.StatusCode);
+            }
+            else
+            {
+                Console.WriteLine("Ошибка {0}", vs.Last());
+                Console.WriteLine("500");
+            }
+        }
         static void Main(string[] args)
         {
             #region Determinant
@@ -81,6 +133,16 @@ namespace ConsoleApp
             }*/
             #endregion
 
+            Parallel.For(1, 1000000, (i, p) =>
+            {
+                Func();
+            });
+
+            for (int i = 0; i < 1000000; i++)
+            {
+
+            }
+
             //List<int> nums = new List<int>() { 4, 1, 5, 3, 6, 9, 3 , 2, 1, 8, 6, 10, 7 };
             //List<MyCustomClass> nums = new List<MyCustomClass>() { new MyCustomClass(1), new MyCustomClass(6), new MyCustomClass(2), new MyCustomClass(9), new MyCustomClass(7)};
 
@@ -96,9 +158,16 @@ namespace ConsoleApp
             //multiple.UnitMatrix<int>(5).ForEach(x => x.ForEach(y => Console.Write(y)));
 
             //Neural_network.Training();
-            MyWebRequest myRequest = new MyWebRequest("https://opendata.trudvsem.ru/api/v1/vacancies?offset=1&limit=100", "GET");
-            string content = myRequest.GetResponse();
-            Console.WriteLine(content);
+
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    RequestTo myRequest = new RequestTo("https://localhost:44312/run/423b7b93-953f-47f9-b219-7154668bfac2", "POST", "423b7b93-953f-47f9-b219-7154668bfac2");
+            //    string content = myRequest.GetResponse();
+            //    Console.WriteLine(content);
+            //}
+
+            
+            
 
             //foreach(var vac in result)
             //{
