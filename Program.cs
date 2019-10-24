@@ -7,213 +7,140 @@ using System.Diagnostics;
 using System.IO;
 using Npgsql;
 using System.Numerics;
-
+using System.Runtime.Serialization.Json;
 using Newtonsoft.Json;
 using RestSharp;
+using System.Net.Http;
+using System.Net;
+using Newtonsoft.Json.Linq;
+using System.Runtime.Serialization;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Runtime;
+
 
 namespace ConsoleApp
 {
     class Program
     {
-        static List<string> vs= new List<string>();
-        static void Func()
-        {
-            string res = "";
-            RestClient client = new RestClient("https://localhost:44312/run/423b7b93-953f-47f9-b219-7154668bfac2");
-            var request = new RestRequest(Method.GET);
-            request.AddHeader("Postman-Token", "a39e65b1-0ee3-4e54-9826-22bd3189a0b1");
-            request.AddHeader("cache-control", "no-cache");
-            IRestResponse response = client.Execute(request);
-            //Console.WriteLine(response.Content);
-
-            client = new RestClient("https://localhost:44312/run/423b7b93-953f-47f9-b219-7154668bfac2");
-            request = new RestRequest(Method.POST);
-            request.AddHeader("Postman-Token", "a39e65b1-0ee3-4e54-9826-22bd3189a0b1");
-            request.AddHeader("cache-control", "no-cache");
-            response = client.Execute(request);
-
-            var item = response.Cookies.FirstOrDefault(x => x.Name == "passing_423b7b93-953f-47f9-b219-7154668bfac2");
-            
-            if (item != null)
-            {
-                vs.Add(item.Value);
-                var index = response.Cookies.IndexOf(item);
-                var d = response.Cookies[index].Value;
-                //Console.WriteLine(response.Content);
-
-
-                client = new RestClient("https://localhost:44312/api/run/savequestionnairedata");
-                request = new RestRequest(Method.POST);
-                request.AddHeader("Postman-Token", "a289fff9-af3b-4b3b-a3da-36a67daf7e47");
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
-                request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"respondentId\"\r\n\r\n" + d + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
-                response = client.Execute(request);
-
-
-                client = new RestClient("https://localhost:44312/api/finish");
-                request = new RestRequest(Method.POST);
-                request.AddHeader("Postman-Token", "8f2ad81e-9003-4679-b1d4-509778a7cabf");
-                request.AddHeader("cache-control", "no-cache");
-                request.AddHeader("content-type", "multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW");
-                request.AddParameter("multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW", "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"respondentId\"\r\n\r\n" + d + "\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"questionnaireId\"\r\n\r\n423b7b93-953f-47f9-b219-7154668bfac2\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW\r\nContent-Disposition: form-data; name=\"endType\"\r\n\r\nend\r\n------WebKitFormBoundary7MA4YWxkTrZu0gW--", ParameterType.RequestBody);
-                response = client.Execute(request);
-                Console.WriteLine(response.StatusCode);
-            }
-            else
-            {
-                Console.WriteLine("Ошибка {0}", vs.Last());
-                Console.WriteLine("500");
-            }
-        }
+        public static string json = @"
+			{
+  				""success"": true,
+  				""message"":
+                [
+                    {
+                        status: ""OK""
+                    },
+                    {
+                        status: ""Lol""
+                    }
+                ],
+			  	""types"": 
+			  	[
+					{
+				  		""name"": ""A5EF3-ASR"",
+				  		""title"": ""ITIL Foundation Plus Cloud Introduction"",
+				  		""classroomDeliveryMethod"": ""Self-paced Virtual Class"",
+				  		""descriptions"": {
+							""EN"": {
+					  			""description"": ""some Text null"",
+					  			""overview"": null,
+					  			""abstract"": ""Some other text"",
+					  			""prerequisits"": null,
+					  			""objective"": null,
+					  			""topic"": null
+							}
+				  		},
+				  		""lastModified"": ""2014-10-08T08:37:43Z"",
+				  		""created"": ""2014-04-28T11:23:12Z""
+					},
+					{
+				  		""name"": ""A4DT3-ASR"",
+				  		""title"": ""ITIL Foundation eLearning Course + Exam"",
+				  		""classroomDeliveryMethod"": ""Self-paced Virtual Class"",
+				  		""descriptions"": {
+							""EN"": {
+					  			""description"": ""some Text"",
+					  			""overview"": null,
+					  			""abstract"": ""abstract test"",
+					  			""prerequisits"": null,
+					  			""objective"": null,
+					  			""topic"": null
+							}
+				  		},
+				  		""lastModified"": ""2014-10-09T08:37:43Z"",
+				  		""created"": ""2014-04-29T11:23:12Z""
+					}
+				]
+			}";
         static void Main(string[] args)
         {
-            #region Determinant
+            //Myscheduler.intervalinseconds(17, 40, 10, () =>
+            //{
+            //    console.writeline("hello");
+            //});
 
-            //int[,] a = new int[3, 3];
-            //a[0, 0] = 2;
-            //a[0, 1] = 4;
-            //a[0, 2] = 3;
-            //a[1, 0] = 5;
-            //a[1, 1] = 7;
-            //a[1, 2] = 8;
-            //a[2, 0] = 6;
-            //a[2, 1] = 9;
-            //a[2, 2] = 1;
-            //Determinant det = new Determinant(a);
-            //det.PrintMatr(a);
-            //det.Calculate();
-            //Console.WriteLine(det.Det);
+            //var responce = new RequestTo("http://opendata.trudvsem.ru/api/v1/vacancies/region/15?offset=0&limit=1").GetResponse()
+            //    .Replace("creation-date", "creation_date").Replace("modify-date", "modify_date").Replace("job-name", "job_name")
+            //    .Replace("hr-agency", "hr_agency");
+            //Responce result = JsonConvert.DeserializeObject<Responce>(responce);
 
-            #endregion
 
-            #region connect to db
-            /*
-            string connectionString = "Host=localhost;Port=5432;User Id=postgres;Password=123456;Database=Permutations";
-            using(var conn = new NpgsqlConnection(connectionString))
+            //using (WebClient client = new WebClient())
+            //{
+            //    string rawJson = client.DownloadString(Helper.GetLink(0, 1));
+            //    Responce vacancies = JsonConvert.DeserializeObject<Responce>(rawJson);
+            //    Console.WriteLine(vacancies);
+            //}
+
+            string json = Task.Run(async () => await Helper.getcontentasync()).Result;
+            int offset = JsonConvert.DeserializeObject<JsonDeserialize.Responce>(json).meta.total / 100 + 1;
+            List<JsonDeserialize.vacancy_container> vacancies = new List<JsonDeserialize.vacancy_container>();
+            for(int page = 1; page <= offset; page++)
             {
-                conn.Open();
+                var resultObjects = AllChildren(JObject.Parse(json))
+                    .First(c => c.Type == JTokenType.Array && c.Path.Contains("vacancies"))
+                    .Children<JObject>();
 
-                using (var cmd = new NpgsqlCommand("delete from data", conn))
+                foreach (JObject result in resultObjects)
                 {
-                    cmd.ExecuteNonQuery();
+                    //foreach (JProperty property in result.Properties())
+                    //{
+                    string currentVacancy = result.ToString()
+                        .Replace("creation-date", "creation_date").Replace("modify-date", "modify_date").Replace("job-name", "job_name")
+                        .Replace("hr-agency", "hr_agency"); ;//.Insert(0, "{") + "}";
+                        JsonDeserialize.vacancy_container vac = JsonConvert.DeserializeObject<JsonDeserialize.vacancy_container>(currentVacancy);
+                        //JsonDeserialize.vacancy vac = JsonSerializer.
+                        vacancies.Add(vac);
+                    //}
                 }
-
-                using (var cmd = new NpgsqlCommand("INSERT INTO data (symbols) VALUES ", conn))
-                {
-                    for(int i= 0; i<10; i++)
-                    {
-                        cmd.CommandText += ", (" + i + ")";
-                    }
-                    cmd.ExecuteNonQuery();
-                }
-
-                using(var cmd = new NpgsqlCommand("SELECT * FROM data as x1, data as x2, data as x3", conn))
-                {
-                    using(var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Console.Write(reader.GetString(0));
-                        };
-                        Console.WriteLine();
-                    }
-                }
-
-                using (var cmd = new NpgsqlCommand("SELECT symbols FROM data", conn))
-                {
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            Console.WriteLine(reader.GetString(0));
-                        }
-                    }
-                }
-            }*/
-            #endregion
-
-            Parallel.For(1, 1000000, (i, p) =>
-            {
-                Func();
-            });
-
-            for (int i = 0; i < 1000000; i++)
-            {
-
+                json = Task.Run(async () => await Helper.getcontentasync(page)).Result;
             }
-
-            //List<int> nums = new List<int>() { 4, 1, 5, 3, 6, 9, 3 , 2, 1, 8, 6, 10, 7 };
-            //List<MyCustomClass> nums = new List<MyCustomClass>() { new MyCustomClass(1), new MyCustomClass(6), new MyCustomClass(2), new MyCustomClass(9), new MyCustomClass(7)};
-
-            //nums.ForEach(x => Console.Write(x.A + " "));
-            //Console.WriteLine();
-
-            //Sorts.QuickSort(nums);
-
-            //nums.ForEach(x => Console.Write(x.A + " "));
-            //Console.WriteLine();
-
-            //MultipleMatrices multiple = new MultipleMatrices();
-            //multiple.UnitMatrix<int>(5).ForEach(x => x.ForEach(y => Console.Write(y)));
-
-            //Neural_network.Training();
-
-            //for (int i = 0; i < 100; i++)
-            //{
-            //    RequestTo myRequest = new RequestTo("https://localhost:44312/run/423b7b93-953f-47f9-b219-7154668bfac2", "POST", "423b7b93-953f-47f9-b219-7154668bfac2");
-            //    string content = myRequest.GetResponse();
-            //    Console.WriteLine(content);
-            //}
-
-            
-            
-
-            //foreach(var vac in result)
-            //{
-            //    Console.WriteLine($"{vac.Id}");
-            //}
-
+            Console.WriteLine(offset + " " + JsonConvert.DeserializeObject<JsonDeserialize.Responce>(json).meta.total);
             Console.ReadKey();
         }
-
-
-        class MyCustomClass : IComparable
+        private static IEnumerable<JToken> AllChildren(JToken json)
         {
-            public int A { get; private set; }
-            public MyCustomClass(int A)
+            foreach (var c in json.Children())
             {
-                this.A = A;
-            }
-
-            public static bool operator <(MyCustomClass a, MyCustomClass b)
-            {
-                return a.A < b.A;
-            }
-
-            public static bool operator >(MyCustomClass a, MyCustomClass b)
-            {
-                return a.A > b.A;
-            }
-
-            public int CompareTo(object o)
-            {
-                try
+                yield return c;
+                foreach (var cc in AllChildren(c))
                 {
-                    if (o is MyCustomClass a)
-                        return this.A.CompareTo(a.A);
-                    else
-                        throw new Exception("Невозможно сравнить два объекта.");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    return 0;
+                    yield return cc;
                 }
             }
         }
     }
 
-   
-   
+    static class Helper
+    {
+        public async static Task<string> getcontentasync() => 
+            await new HttpClient().GetStringAsync(GetLink(0));
+
+        public async static Task<string> getcontentasync(int offset) =>
+            await new HttpClient().GetStringAsync(GetLink(offset));
+
+        public static string GetLink(int offset, int limit = 100) =>
+            $"http://opendata.trudvsem.ru/api/v1/vacancies/region/15?offset={offset}&limit={limit}";
+    }
 }
