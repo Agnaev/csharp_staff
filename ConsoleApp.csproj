@@ -72,6 +72,7 @@
       <HintPath>packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -81,7 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Determinant.cs" />
-    <Compile Include="JsonDeserialize.cs" />
+    <Compile Include="JsonDeserializer.cs" />
     <Compile Include="MultipleMatrices.cs" />
     <Compile Include="MyWebRequest.cs" />
     <Compile Include="Neural_network.cs" />
