@@ -6,18 +6,21 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
-    class Sorts
+    internal class Sorts
     {
         public static List<T> Selection<T>(List<T> list)
         {
             try
             {
-                var indexMax = list.Count;
+                int indexMax = list.Count;
                 for (int i = 0; i < list.Count; i++)
+                {
                     Swap(list, indexMax - 1, GetIndexOfMax(list, indexMax--));
+                }
+
                 return list;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
@@ -29,12 +32,44 @@ namespace ConsoleApp
             try
             {
                 for (int i = 0; i < list.Count; i++)
+                {
                     for (int j = list.Count - 1; j > i; j--)
+                    {
                         if (Comparer<T>.Default.Compare(list[j], list[j - 1]) <= 0)
+                        {
                             Swap(list, j, j - 1);
+                        }
+                    }
+                }
+
                 return list;
             }
-            catch(Exception e)
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+
+        public static List<T> Bubble<T>(List<T> list, Func<T, T, bool> compare)
+        {
+            try
+            {
+                for (int i = 0; i < list.Count; i++)
+                {
+                    for (int j = list.Count - 1; j > i; j--)
+                    {
+                        
+                        if (compare(list[j], list[j - 1]))
+                        {
+                            Swap(list, j, j - 1);
+                        }
+                    }
+                }
+
+                return list;
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
@@ -56,7 +91,29 @@ namespace ConsoleApp
                 }
                 return list;
             }
-            catch(Exception e)
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+        
+        public static List<T> Insertion<T>(List<T> list, Func<T, T, bool> compare)
+        {
+            try
+            {
+                for (int j = 1; j < list.Count; j++)
+                {
+                    T key = list[j];
+                    for (int i = j - 1; i >= 0 && compare(list[i], key); i--)
+                    {
+                        list[i + 1] = list[i];
+                        list[i] = key;
+                    }
+                }
+                return list;
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
@@ -68,10 +125,14 @@ namespace ConsoleApp
             try
             {
                 if (list.Count == 2 && Comparer<T>.Default.Compare(list[0], list[1]) >= 1)
+                {
                     return Swap(list, 0, 1);
+                }
 
                 if (list.Count == 2 || list.Count == 1 || list.Count == 0)
+                {
                     return list;
+                }
 
                 int half = list.Count / 2;
                 List<T> firstHalf = list.Take(half).ToList(),
@@ -105,16 +166,67 @@ namespace ConsoleApp
                 return null;
             }
         }
+        
+        public static List<T> MergeSort<T>(List<T> list, Func<T, T, bool> compare)
+        {
+            try
+            {
+                if (list.Count == 2 && compare(list[0], list[1]))
+                {
+                    return Swap(list, 0, 1);
+                }
+
+                if (list.Count == 2 || list.Count == 1 || list.Count == 0)
+                {
+                    return list;
+                }
+
+                int half = list.Count / 2;
+                List<T> firstHalf = list.Take(half).ToList(),
+                    secondHalf = list.Skip(half).Take(list.Count - half).ToList();
+
+                MergeSort(firstHalf);
+                MergeSort(secondHalf);
+
+                T stub = list.Max();
+                list.Clear();
+                for (int i = 0, j = 0; i < firstHalf.Count || j < secondHalf.Count;)
+                {
+                    (int, T) minFirst = firstHalf.Count != 0 ? GetMin<T>(firstHalf) : (int.MaxValue, stub);
+                    (int, T) minSecond = secondHalf.Count != 0 ? GetMin<T>(secondHalf) : (int.MaxValue, stub);
+                    if (compare(minFirst.Item2, minSecond.Item2))
+                    {
+                        list.Add(minFirst.Item2);
+                        firstHalf.RemoveAt(minFirst.Item1);
+                    }
+                    else
+                    {
+                        list.Add(minSecond.Item2);
+                        secondHalf.RemoveAt(minSecond.Item1);
+                    }
+                }
+                return list;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
 
         public static List<T> QuickSort<T>(List<T> list)
         {
             try
             {
                 if (list.Count == 2 && Compare<T>(list[1], list[0]))
+                {
                     return Swap(list, 0, 1);
+                }
 
                 if (list.Count == 0 || list.Count == 1 || list.Count == 2)
+                {
                     return list;
+                }
 
                 T pivot = list[list.Count / 2];
                 List<T> firstHalf = new List<T>(),
@@ -144,7 +256,56 @@ namespace ConsoleApp
 
                 return list;
             }
-            catch(Exception e)
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+        
+        public static List<T> QuickSort<T>(List<T> list, Func<T, T, bool> compare)
+        {
+            try
+            {
+                if (list.Count == 2 && compare(list[1], list[0]))
+                {
+                    return Swap(list, 0, 1);
+                }
+
+                if (list.Count == 0 || list.Count == 1 || list.Count == 2)
+                {
+                    return list;
+                }
+
+                T pivot = list[list.Count / 2];
+                List<T> firstHalf = new List<T>(),
+                    secondHalf = new List<T>();
+                for (int i = 0; i < list.Count; i++)
+                {
+                    if (i != list.Count / 2)
+                    {
+                        if (compare(list[i], pivot))
+                        {
+                            firstHalf.Add(list[i]);
+                        }
+                        else
+                        {
+                            secondHalf.Add(list[i]);
+                        }
+                    }
+                }
+
+                QuickSort(firstHalf);
+                QuickSort(secondHalf);
+
+                list.Clear();
+                list.AddRange(firstHalf);
+                list.Add(pivot);
+                list.AddRange(secondHalf);
+
+                return list;
+            }
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
@@ -158,7 +319,7 @@ namespace ConsoleApp
             {
                 return Comparer<T>.Default.Compare(a, b) < 0;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return false;
@@ -174,7 +335,7 @@ namespace ConsoleApp
                 result.Item1 = list.IndexOf(result.Item2);
                 return result;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return (-1, list[0]);
@@ -192,7 +353,7 @@ namespace ConsoleApp
                 }
                 return max.Item2;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return -1;
@@ -207,7 +368,7 @@ namespace ConsoleApp
                 a = b;
                 b = tmp;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -217,12 +378,12 @@ namespace ConsoleApp
         {
             try
             {
-                var tmp = arr[a];
+                T tmp = arr[a];
                 arr[a] = arr[b];
                 arr[b] = tmp;
                 return arr;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
