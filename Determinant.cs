@@ -6,34 +6,19 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
-    class Determinant
+    public class Determinant<T>
     {
-        private int[,] Matrix { get; set; }
-        public int Det { get; private set; }
+        private T[,] Matrix { get; set; }
+        public T Det { get; private set; }
 
-        private int TwoByTwo(int [,] m)
+        private T TwoByTwo(T [,] m)
         {
             if(m.GetLength(1) != 2 || m.GetLength(0) != 2)
                 new Exception("Uncorrect matrix");
-            return m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0];
+            return (dynamic)m[0, 0] * m[1, 1] - (dynamic)m[0, 1] * m[1, 0];
         }
 
-        private int TwoByTwo(List<List<int>> m)
-        {
-            try
-            {
-                if (m.Count != 2 || m[0].Count != 0)
-                    throw new Exception("Uncorrect matrix");
-                return m[0][0] * m[1][1] - m[0][1] * m[1][0];
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return -1;
-            }
-        }
-
-        private void GetMatr(int[,] mas, ref int[,] p, int i, int j, int m = 0)
+        private void GetMatr(T[,] mas, ref T[,] p, int i, int j, int m = 0)
         {
             int di = 0, dj = 0;
             m = m == 0 ? mas.GetLength(0) - 1 : m - 1;
@@ -46,7 +31,7 @@ namespace ConsoleApp
             }
         }
 
-        public void PrintMatr<T>(T[,] mas, int m = 0)
+        private void PrintMatr(T[,] mas, int m = 0)
         {
             m = m == 0 ? mas.GetLength(0) : m;
             for (int i = 0; i < m; i++)
@@ -59,9 +44,9 @@ namespace ConsoleApp
             }
         }
 
-        private int Processing(int [,] mas)
+        private T Processing(T [,] mas)
         {
-            int d = 0;
+            T d = (dynamic)0;
 
             if (mas.GetLength(0) == 1)
             {
@@ -74,25 +59,25 @@ namespace ConsoleApp
             else
             {
                 int j = 0, k = 1;
-                int[,] p = new int[mas.GetLength(0) - 1, mas.GetLength(1) - 1];
+                T[,] p = new T[mas.GetLength(0) - 1, mas.GetLength(1) - 1];
                 for (int i = 0; i < mas.GetLength(0); i++)
                 {
                     GetMatr(mas, ref p, i, 0, mas.GetLength(0));
-                    Console.WriteLine(mas[i, j]);
-                    PrintMatr(p, p.GetLength(0));
-                    d += k * mas[i, 0] * Processing(p);
+                    //Console.WriteLine(mas[i, j]);
+                    //PrintMatr(p, p.GetLength(0));
+                    d += (dynamic)k * mas[i, 0] * Processing(p);
                     k = -k;
                 }
             }
             return d;
         }
 
-        public Determinant(int[,] Matrix)
+        public Determinant(T[,] Matrix)
         {
             this.Matrix = Matrix;
         }
 
-        public int Calculate()
+        public T Calculate()
         {
             if(Matrix.GetLength(0) != Matrix.GetLength(1))
             {
@@ -103,8 +88,7 @@ namespace ConsoleApp
                 throw new Exception("Empty matrix");
             }
             
-            Det = Processing(Matrix);
-            return Det;
+            return Det = Processing(Matrix);
         }
     }
 }
