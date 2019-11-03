@@ -10,7 +10,7 @@ namespace Roll
     public class Roll<T> : IList<T>, ICollection<T>, IEnumerable<T>, IEnumerable, IList, ICollection, IReadOnlyList<T>, IReadOnlyCollection<T>
     {
         private bool isReadonly = false;
-        private static int count = 1;
+        private static int count = 0;
         private T[] _ = new T[count];
         T IList<T>.this[int index] {
             get 
@@ -39,7 +39,12 @@ namespace Roll
 
         int IReadOnlyCollection<T>.Count => count;
 
-        T IReadOnlyList<T>.this[int index] => _[index];
+        T IReadOnlyList<T>.this[int index] {
+            get
+            {
+                return _[index];
+            }
+        }
 
         object IList.this[int index] 
         { 
@@ -63,7 +68,14 @@ namespace Roll
 
         bool ICollection<T>.Contains(T item)
         {
-            throw new NotImplementedException(); //make binnary search
+            foreach(var elem in _)
+            {
+                if (Equals(elem, item))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
@@ -76,6 +88,7 @@ namespace Roll
             {
                 array[i] = _[j];
             }
+            Array.Resize(ref _, --count);
         }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
@@ -88,67 +101,205 @@ namespace Roll
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            throw new NotImplementedException();
+            foreach (T item in _)
+            {
+                yield return item;
+            }
         }
 
         int IList<T>.IndexOf(T item)
         {
-            throw new NotImplementedException();
+            int pos = -1;
+            foreach(var elem in _)
+            {
+                pos++;
+                if(Equals(elem, item))
+                {
+                    return pos;
+                }
+            }
+            return -1;
         }
 
         void IList<T>.Insert(int index, T item)
         {
-            throw new NotImplementedException();
+            if (index != count - 1)
+            {
+                for (int i = index; i < count - 1; i++)
+                {
+                    _[i] = _[i + 1];
+                }
+            }
+            Array.Resize(ref _, --count);
         }
 
         bool ICollection<T>.Remove(T item)
         {
-            throw new NotImplementedException();
+            int index = -1;
+            foreach(var elem in _)
+            {
+                index++;
+                if(Equals(item, elem))
+                {
+                    if (index != count - 1) // если не последний элемент
+                    {
+                        for (int i = index; i < count - 1; i++) // то сдвигать
+                        {
+                            _[i] = _[i + 1];
+                        }
+                        Array.Resize(ref _, --count);
+                    }
+                    return true;
+                }
+            }
+            return false;
         }
 
         void IList<T>.RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            if (index != count - 1) // если не последний элемент
+            {
+                for (int i = index; i < count - 1; i++) // то сдвигать
+                {
+                    _[i] = _[i + 1];
+                }
+            }
+            Array.Resize(ref _, --count);
         }
 
         int IList.Add(object value)
         {
-            throw new NotImplementedException();
+            Array.Resize(ref _, ++count);
+            _[count] = (T)value;
+            return count;
+            //throw new NotImplementedException();
+        }
+
+        public int Add(object value)
+        {
+            Array.Resize(ref _, ++count);
+            _[count - 1] = (T)value;
+            return count;
         }
 
         bool IList.Contains(object value)
         {
-            throw new NotImplementedException();
+            foreach (var elem in _)
+            {
+                if (Equals(elem, (T)value))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         void IList.Clear()
         {
-            throw new NotImplementedException();
+            Array.Resize(ref _, 0);
+        }
+
+        public void ForEach(Action<T> act)
+        {
+            foreach(T t in _)
+            {
+                act(t);
+            }
+        }
+
+        public bool All(Func<T, bool> act)
+        {
+            foreach(T t in _)
+            {
+                if (!act(t))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool Any(Func<T, bool> action)
+        {
+            foreach(T t in _)
+            {
+                if (action(t))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         int IList.IndexOf(object value)
         {
-            throw new NotImplementedException();
+            for(int index = 0; index < count; index++)
+            {
+                if(Equals((T)value, _[index]))
+                {
+                    return index;
+                }
+            }
+            return -1;
         }
 
         void IList.Insert(int index, object value)
         {
-            throw new NotImplementedException();
+            if(index == count - 1)
+            {
+                Array.Resize(ref _, count - 1);
+            }
+            for(int i = index; i < count - 1; i++)
+            {
+                _[i] = _[i + 1];
+            }
+            Array.Resize(ref _, --count);
         }
 
         void IList.Remove(object value)
         {
-            throw new NotImplementedException();
+            int index = -1;
+            foreach (var elem in _)
+            {
+                index++;
+                if (Equals((T)value, elem))
+                {
+                    if (index != count - 1) // если не последний элемент
+                    {
+                        for (int i = index; i < count - 1; i++) // то сдвигать
+                        {
+                            _[i] = _[i + 1];
+                        }
+                        Array.Resize(ref _, --count);
+                    }
+                }
+            }
         }
 
         void IList.RemoveAt(int index)
         {
-            throw new NotImplementedException();
+            if (index != count - 1) // если не последний элемент
+            {
+                for (int i = index; i < count - 1; i++) // то сдвигать
+                {
+                    _[i] = _[i + 1];
+                }
+            }
+            Array.Resize(ref _, --count);
         }
 
         void ICollection.CopyTo(Array array, int index)
         {
-            throw new NotImplementedException();
+            //for(int i = index, j = 0; i < count; i++, j++)
+            //{
+            //    array[j] = _[i];
+            //}
+
+        }
+
+        private bool Equals(T a, T b)
+        {
+            return Comparer<T>.Default.Compare(a, b) == 0;
         }
     }
 }
