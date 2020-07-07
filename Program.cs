@@ -80,8 +80,8 @@ namespace ConsoleApp
                 { 2, -5, -7, 5 },
                 { -4, 3, 5, -6 },
             };
-            RecursionCalculateDeterminant determinant = new RecursionCalculateDeterminant(matrix);
-            Console.WriteLine($"Determinant of matrix is equals to {determinant.Calculate()}");
+            RecursionCalculateDeterminant determinant = new RecursionCalculateDeterminant();
+            Console.WriteLine($"Determinant of matrix is equals to {determinant.Calculate(matrix)}");
             Console.ReadKey();
         }
 

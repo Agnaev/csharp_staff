@@ -105,31 +105,26 @@ namespace ConsoleApp
         /// <returns>Определитель матрицы.</returns>
         public double Calculate(double[,] matrix)
         {
-            if(matrix.GetLength(0) != matrix.GetLength(1))
+            int length = matrix.GetLength(0);
+            if(length != matrix.GetLength(1))
             {
                 throw new ArgumentException("Матрица должна быть квадратной.");
             }
-            else if(matrix.GetLength(0) == 0)
+            return new Func<double>[]
             {
-                throw new ArgumentException("Пустая матрица.");
-            }
-
-            if(matrix.GetLength(0) == 1)
-            {
-                return matrix[0, 0];
-            }
-            if(matrix.GetLength(0) == 2 && matrix.GetLength(1) == 2)
-            {
-                return matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0];
-            }
-
-            double determinant = 0;
-            for(int i = 0; i < matrix.GetLength(0); i++)
-            {
-                determinant += (Math.Pow(-1, i) < 0 ? -1 : 1) * matrix[0, i] * Calculate(Deletion(matrix, 0, i));
-            }
-            this.Determinant = determinant;
-            return determinant;
+                () => throw new ArgumentException("Пустая матрица."),
+                () => matrix[0, 0],
+                () => matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0],
+                () => {
+                    double determinant = 0;
+                    for (int i = 0; i < length; i++)
+                    {
+                        determinant += (Math.Pow(-1, i) < 0 ? -1 : 1) * matrix[0, i] * Calculate(Deletion(matrix, 0, i));
+                    }
+                    this.Determinant = determinant;
+                    return determinant;
+                }
+            }[length > 3 ? 3 : length]();
         }
 
         /// <summary>
@@ -143,20 +138,22 @@ namespace ConsoleApp
         {
             int length = matrix.GetLength(0);
             double[,] result = new double[length - 1, length - 1];
-            for(int _ = 0, i = 0; _ < length; _++)
+            for(int _ = 0, i = 0; _ < length; _++, i++)
             {
                 if(_ == line)
                 {
+                    i--;
                     continue;
                 }
-                for(int __ = 0, j = 0; __ < length; __++)
+                for(int __ = 0, j = 0; __ < length; __++, j++)
                 {
                     if(__ == column)
                     {
+                        j--;
                         continue;
                     }
 
-                    result[i++, j++] = matrix[_, __];
+                    result[i, j] = matrix[_, __];
                 }
             }
             return result;
