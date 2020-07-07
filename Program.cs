@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Runtime;
 using System.Web.Script.Serialization;
 using Roll;
+using System.Collections;
 
 namespace ConsoleApp
 {
@@ -36,7 +37,7 @@ namespace ConsoleApp
                 return a.a < b.a;
             }
 
-            public static bool operator>(A a, A b)
+            public static bool operator >(A a, A b)
             {
                 return a.a > b.a;
             }
@@ -48,13 +49,13 @@ namespace ConsoleApp
                 //return this.a.CompareTo(that.a);
                 try
                 {
-                    if(obj is A a)
+                    if (obj is A a)
                     {
                         return this.a.CompareTo(a.a);
                     }
                     throw new Exception($"Cannot compare two values: {obj} and {this.a}");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Console.WriteLine($"Error: {e.Message}");
                     return -1;
@@ -64,28 +65,73 @@ namespace ConsoleApp
 
         public static void Main(string[] args)
         {
-            //JsonDeserializer.LocalMain();
+            //HttpClient client = new HttpClient();
+            //Task.Run(async () => await PostRequest(client));
 
-            //List<A> list = new List<A>() { new A(4), new A(2), new A(6), new A(1), new A(6), new A(9), new A(6), new A(4), new A(1), new A(2) };
-            //Sorts.Insertion(list, (A a, A b) =>  a > b );
-
-            //list.ForEach(c => Console.WriteLine(c.a + " "));
-
-            //new BackPropagation(new LearningAlgorithmConfig()).Train();
-            Roll<string> roll = new Roll<string>() { "lol", "kek", "cheburek", "arbidol" };
-            //foreach(var i in roll)
+            //var _enum = new Binnary(4);
+            //foreach (var b in _enum)
             //{
-            //    Console.WriteLine(i);
+            //    Console.WriteLine(b);
             //}
-
-            roll.ForEach(elem =>
+            var matrix = new double[,]
             {
-                Console.WriteLine(elem);
-            });
-
-
-
+                { 3, -3, -5, 8 },
+                { -3, 2, 4, -6 },
+                { 2, -5, -7, 5 },
+                { -4, 3, 5, -6 },
+            };
+            RecursionCalculateDeterminant determinant = new RecursionCalculateDeterminant(matrix);
+            Console.WriteLine($"Determinant of matrix is equals to {determinant.Calculate()}");
             Console.ReadKey();
+        }
+
+
+        public static async Task PostRequest(HttpClient client)
+        {
+            var data = await client.PostAsync("https://jsonplaceholder.typicode.com/posts", null);
+            Console.WriteLine(data);
+        }
+    }
+
+    public class Binnary: IEnumerable
+    {
+        private int Dimension { get; set; }
+        public Binnary(int dim)
+        {
+            this.Dimension = dim;
+        }
+            
+
+        public IEnumerator GetEnumerator()
+        {
+            // старт с нуля
+            string bin = new string('0', this.Dimension);
+
+            // цикл теста двоичного счётчика 16 bit
+            for (int c = 1; c < 32; c *= 2)
+            {
+
+                ushort dec = 0x0000;
+                ushort k = 0;
+                // преобразовать из двоичного в десятичное представление
+                for (int i = this.Dimension - 1; i > 0; i--, k++)
+                {
+                    if (bin[i] == '1')
+                        dec |= (ushort)(1 << k);
+                }
+                dec++;  // счётчик инкремента
+
+                bin = Convert.ToString(dec, 2);
+                int len = Dimension - bin.Length;
+                while (--len >= 0) // дополняем нулями
+                    bin = bin.Insert(0, "0");
+
+                //Console.WriteLine("{0} - {1}", bin, dec);
+                if (bin.IndexOf('1') == bin.LastIndexOf('1'))
+                {
+                    yield return bin;
+                }
+            }
         }
     }
 }

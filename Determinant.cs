@@ -91,4 +91,75 @@ namespace ConsoleApp
             return Det = Processing(Matrix);
         }
     }
+
+    public class RecursionCalculateDeterminant
+    {
+        /// <summary>
+        /// Результат вычисления определителя матрицы.
+        /// </summary>
+        public double? Determinant { get; private set; } = null;
+        /// <summary>
+        /// Вычисление определителя матрицы matrix.
+        /// </summary>
+        /// <param name="matrix">Матрица, у которой необходимо вычислить определитель.</param>
+        /// <returns>Определитель матрицы.</returns>
+        public double Calculate(double[,] matrix)
+        {
+            if(matrix.GetLength(0) != matrix.GetLength(1))
+            {
+                throw new ArgumentException("Матрица должна быть квадратной.");
+            }
+            else if(matrix.GetLength(0) == 0)
+            {
+                throw new ArgumentException("Пустая матрица.");
+            }
+
+            if(matrix.GetLength(0) == 1)
+            {
+                return matrix[0, 0];
+            }
+            if(matrix.GetLength(0) == 2 && matrix.GetLength(1) == 2)
+            {
+                return matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0];
+            }
+
+            double determinant = 0;
+            for(int i = 0; i < matrix.GetLength(0); i++)
+            {
+                determinant += (Math.Pow(-1, i) < 0 ? -1 : 1) * matrix[0, i] * Calculate(Deletion(matrix, 0, i));
+            }
+            this.Determinant = determinant;
+            return determinant;
+        }
+
+        /// <summary>
+        /// Вычеркивание из метрицы matrix строки line и столбца column.
+        /// </summary>
+        /// <param name="matrix">Матрица</param>
+        /// <param name="line">Вычеркиваемая строка</param>
+        /// <param name="column">Вычеркиваемый столбец</param>
+        /// <returns>Матрица с вычеркнутой строкой и столбцом.</returns>
+        private double[,] Deletion(double[,] matrix, int line, int column)
+        {
+            int length = matrix.GetLength(0);
+            double[,] result = new double[length - 1, length - 1];
+            for(int _ = 0, i = 0; _ < length; _++)
+            {
+                if(_ == line)
+                {
+                    continue;
+                }
+                for(int __ = 0, j = 0; __ < length; __++)
+                {
+                    if(__ == column)
+                    {
+                        continue;
+                    }
+
+                    result[i++, j++] = matrix[_, __];
+                }
+            }
+            return result;
+        }
+    }
 }
