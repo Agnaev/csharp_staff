@@ -20,118 +20,81 @@ using System.Runtime;
 using System.Web.Script.Serialization;
 using Roll;
 using System.Collections;
+using System.Runtime.CompilerServices;
+using System.Net.NetworkInformation;
 
 namespace ConsoleApp
 {
+    public class A
+    {
+        public List<double> Data { get; set; }
+
+        public A()
+        {
+            this.Data = new List<double>();
+        }
+
+        public A(List<double> data)
+        {
+            this.Data = data;
+        }
+
+        public static A operator*(A source, double a)
+        {
+            A res = new A();
+            source.Data.ForEach(num =>
+            {
+                res.Data.Add(num * a);
+            });
+            return res;
+        }
+
+
+        public static A operator/(A a, double determinator)
+        {
+            A res = new A();
+            a.Data.ForEach(num => res.Data.Add(num / determinator));
+            return res;
+        }
+
+        public static A operator*(double a, A source) => source * a;
+        public static A operator /(double determinator, A a) => a / determinator;
+
+        public static bool operator==(A a, A b) => a.Data == b.Data;
+        public static bool operator !=(A a, A b) => a.Data != b.Data;
+    }
     public class Program
     {
-        class A : IComparable
-        {
-            public int a { get; set; }
-            public A(int a)
-            {
-                this.a = a;
-            }
-            public static bool operator <(A a, A b)
-            {
-                return a.a < b.a;
-            }
-
-            public static bool operator >(A a, A b)
-            {
-                return a.a > b.a;
-            }
-
-            int IComparable.CompareTo(object obj)
-            {
-                //if (obj == null) return 1;
-                //A that = obj as A;
-                //return this.a.CompareTo(that.a);
-                try
-                {
-                    if (obj is A a)
-                    {
-                        return this.a.CompareTo(a.a);
-                    }
-                    throw new Exception($"Cannot compare two values: {obj} and {this.a}");
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Error: {e.Message}");
-                    return -1;
-                }
-            }
-        }
-
         public static void Main(string[] args)
         {
-            //HttpClient client = new HttpClient();
-            //Task.Run(async () => await PostRequest(client));
-
-            //var _enum = new Binnary(4);
-            //foreach (var b in _enum)
+            //var matrix = new double[,]
             //{
-            //    Console.WriteLine(b);
+            //    { 3, -3, -5, 8 },
+            //    { -3, 2, 4, -6 },
+            //    { 2, -5, -7, 5 },
+            //    { -4, 3, 5, -6 },
+            //};
+            //RecursionCalculateDeterminant determinant = new RecursionCalculateDeterminant();
+            //Console.WriteLine($"Determinant of matrix is equals to {determinant.Calculate(matrix)}");
+
+
+            //Permutate<int> list = new Permutate<int>() { 1, 2, 3, 4, 5 };
+            //foreach(var per in list.Get())
+            //{
+            //    Console.WriteLine(string.Join(" ", per));
             //}
-            var matrix = new double[,]
+            void print(List<double> data)
             {
-                { 3, -3, -5, 8 },
-                { -3, 2, 4, -6 },
-                { 2, -5, -7, 5 },
-                { -4, 3, 5, -6 },
-            };
-            RecursionCalculateDeterminant determinant = new RecursionCalculateDeterminant();
-            Console.WriteLine($"Determinant of matrix is equals to {determinant.Calculate(matrix)}");
-            Console.ReadKey();
-        }
-
-
-        public static async Task PostRequest(HttpClient client)
-        {
-            var data = await client.PostAsync("https://jsonplaceholder.typicode.com/posts", null);
-            Console.WriteLine(data);
-        }
-    }
-
-    public class Binnary: IEnumerable
-    {
-        private int Dimension { get; set; }
-        public Binnary(int dim)
-        {
-            this.Dimension = dim;
-        }
-            
-
-        public IEnumerator GetEnumerator()
-        {
-            // старт с нуля
-            string bin = new string('0', this.Dimension);
-
-            // цикл теста двоичного счётчика 16 bit
-            for (int c = 1; c < 32; c *= 2)
-            {
-
-                ushort dec = 0x0000;
-                ushort k = 0;
-                // преобразовать из двоичного в десятичное представление
-                for (int i = this.Dimension - 1; i > 0; i--, k++)
-                {
-                    if (bin[i] == '1')
-                        dec |= (ushort)(1 << k);
-                }
-                dec++;  // счётчик инкремента
-
-                bin = Convert.ToString(dec, 2);
-                int len = Dimension - bin.Length;
-                while (--len >= 0) // дополняем нулями
-                    bin = bin.Insert(0, "0");
-
-                //Console.WriteLine("{0} - {1}", bin, dec);
-                if (bin.IndexOf('1') == bin.LastIndexOf('1'))
-                {
-                    yield return bin;
-                }
+                Console.WriteLine(string.Join(" ", data));
             }
+            void print_a(A data) => print(data.Data);
+
+            var a = new A(new List<double> { 1, 2, 3, 4, 5, 6 });
+            print_a(a * 10);
+            print_a(a * 10 / 10);
+
+
+            Console.ReadKey();
         }
     }
 }

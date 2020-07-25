@@ -100,6 +100,7 @@
     <Compile Include="MultipleMatrices.cs" />
     <Compile Include="MyWebRequest.cs" />
     <Compile Include="Neural_network.cs" />
+    <Compile Include="Permutate.cs" />
     <Compile Include="Pi.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
