@@ -22,6 +22,8 @@ using Roll;
 using System.Collections;
 using System.Runtime.CompilerServices;
 using System.Net.NetworkInformation;
+using ConsoleApp.linearAlgebra;
+using System.Threading;
 
 namespace ConsoleApp
 {
@@ -67,32 +69,67 @@ namespace ConsoleApp
     {
         public static void Main(string[] args)
         {
-            //var matrix = new double[,]
-            //{
-            //    { 3, -3, -5, 8 },
-            //    { -3, 2, 4, -6 },
-            //    { 2, -5, -7, 5 },
-            //    { -4, 3, 5, -6 },
-            //};
-            //RecursionCalculateDeterminant determinant = new RecursionCalculateDeterminant();
-            //Console.WriteLine($"Determinant of matrix is equals to {determinant.Calculate(matrix)}");
+            const int COUNT = 10;
+            double[,] matrix = new double[COUNT, COUNT];
 
+            Random rand = new Random(10);
+            for (int i = 0; i < COUNT; i++)
+            {
+                for (int j = 0; j < COUNT; j++)
+                {
+                    matrix[i, j] = rand.NextDouble() * 100;
+                }
+            }
+            ParallelRecursionCalculateDeterminant determinant = new ParallelRecursionCalculateDeterminant();
+            RecursionCalculateDeterminant recDeterminant = new RecursionCalculateDeterminant();
+            Determinant just_determinant = new Determinant();
+
+            List<Thread> threads = new List<Thread>() {
+                new Thread(() => {
+                    Stopwatch timer = new Stopwatch();
+                    timer.Start();
+                    var res = just_determinant.Calculate(matrix);
+                    timer.Stop();
+                    Console.WriteLine($"Just determinant finder time is {timer.ElapsedMilliseconds / 60} with result {res}");
+                }),
+                new Thread(() =>
+                {
+                    Stopwatch timer = new Stopwatch();
+                    timer.Start();
+                    var res = determinant.Calculate(matrix);
+                    timer.Stop();
+
+                    Console.WriteLine($"Sequential calculating time is {timer.ElapsedMilliseconds / 60} with result {res}");
+                }),
+                new Thread(() =>
+                {
+                    Stopwatch timer = new Stopwatch();
+                    timer.Start();
+                    var res = recDeterminant.Calculate(matrix);
+                    timer.Stop();
+
+                    Console.WriteLine($"Parallel calculating time is {timer.ElapsedMilliseconds / 60} with result {res}");
+                })
+            };
+
+            //threads.ForEach(x => x.Start());
+
+            //threads.ForEach(x => x.Join());
 
             //Permutate<int> list = new Permutate<int>() { 1, 2, 3, 4, 5 };
             //foreach(var per in list.Get())
             //{
             //    Console.WriteLine(string.Join(" ", per));
             //}
-            void print(List<double> data)
-            {
-                Console.WriteLine(string.Join(" ", data));
-            }
-            void print_a(A data) => print(data.Data);
+            //void print(List<double> data)
+            //{
+            //    Console.WriteLine(string.Join(" ", data));
+            //}
+            //void print_a(A data) => print(data.Data);
 
-            var a = new A(new List<double> { 1, 2, 3, 4, 5, 6 });
-            print_a(a * 10);
-            print_a(a * 10 / 10);
-
+            //var a = new A(new List<double> { 1, 2, 3, 4, 5, 6 });
+            //print_a(a * 10);
+            //print_a(a * 10 / 10);
 
             Console.ReadKey();
         }
