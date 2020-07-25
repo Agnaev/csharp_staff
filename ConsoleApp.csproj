@@ -95,7 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BackPropagation.cs" />
-    <Compile Include="Determinant.cs" />
+    <Compile Include="linearAlgebra\Cramers%27sProblem.cs" />
+    <Compile Include="linearAlgebra\Determinant.cs" />
     <Compile Include="JsonDeserializer.cs" />
     <Compile Include="MultipleMatrices.cs" />
     <Compile Include="MyWebRequest.cs" />
