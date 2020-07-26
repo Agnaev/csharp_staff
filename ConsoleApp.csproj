@@ -98,7 +98,7 @@
     <Compile Include="linearAlgebra\Cramers%27sProblem.cs" />
     <Compile Include="linearAlgebra\Determinant.cs" />
     <Compile Include="JsonDeserializer.cs" />
-    <Compile Include="MultipleMatrices.cs" />
+    <Compile Include="linearAlgebra\MultipleMatrices.cs" />
     <Compile Include="MyWebRequest.cs" />
     <Compile Include="Neural_network.cs" />
     <Compile Include="Permutate.cs" />

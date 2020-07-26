@@ -54,14 +54,12 @@ namespace ConsoleApp.linearAlgebra
             if (matrix.GetLength(0) != matrix.GetLength(1))
             {
                 error = new Exception("Матрица должна быть квадратной.");
-                return true;
             }
             else if (matrix.GetLength(0) == 0)
             {
                 error = new Exception("Empty matrix");
-                return true;
             }
-            return false;
+            return error != null;
         }
 
         protected Func<double[,], double>[] fns = new Func<double[,], double>[4] {
