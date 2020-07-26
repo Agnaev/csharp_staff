@@ -112,9 +112,9 @@ namespace ConsoleApp
                 })
             };
 
-            //threads.ForEach(x => x.Start());
+            threads.ForEach(x => x.Start());
 
-            //threads.ForEach(x => x.Join());
+            threads.ForEach(x => x.Join());
 
             //Permutate<int> list = new Permutate<int>() { 1, 2, 3, 4, 5 };
             //foreach(var per in list.Get())
@@ -130,6 +130,27 @@ namespace ConsoleApp
             //var a = new A(new List<double> { 1, 2, 3, 4, 5, 6 });
             //print_a(a * 10);
             //print_a(a * 10 / 10);
+
+
+            //const int COUNT = 10;
+
+            //double[,] A = new double[COUNT, COUNT];
+            //double[] B = new double[COUNT];
+
+            //Random rand = new Random(10);
+            //for (int i = 0; i < COUNT; i++)
+            //{
+            //    B[i] = rand.NextDouble();
+            //    for (int j = 0; j < COUNT; j++)
+            //    {
+            //        A[i, j] = rand.NextDouble();
+            //    }
+            //}
+
+            //CramersProblem linearSystem = new CramersProblem(A, B);
+            //linearSystem.Solve();
+            //Console.WriteLine(string.Join(" ", linearSystem.Result));
+
 
             Console.ReadKey();
         }

@@ -47,20 +47,52 @@ namespace ConsoleApp.linearAlgebra
             }
             return result;
         }
+
+        protected bool CheckMatrix(double[,] matrix, out Exception error)
+        {
+            error = null;
+            if (matrix.GetLength(0) != matrix.GetLength(1))
+            {
+                error = new Exception("Матрица должна быть квадратной.");
+                return true;
+            }
+            else if (matrix.GetLength(0) == 0)
+            {
+                error = new Exception("Empty matrix");
+                return true;
+            }
+            return false;
+        }
+
+        protected Func<double[,], double>[] fns = new Func<double[,], double>[4] {
+            (double[,] _matrix) => throw new ArgumentException("Пустая матрица."),
+            (double[,] _matrix) => _matrix[0, 0],
+            (double[,] _matrix) => _matrix[0, 0] * _matrix[1, 1] - _matrix[0, 1] * _matrix[1, 0],
+            null
+        };
+
+        protected int GetFunctionPointer(int matrix_length)
+        {
+            return matrix_length > 3 ? 3 : matrix_length;
+        }
     }
 
     public class Determinant : DeterminantFinder
     {
         private double? Processing(double [,] matrix)
         {
+            if(this.CheckMatrix(matrix, out Exception error))
+            {
+                throw error;
+            }
 
             if (matrix.GetLength(0) == 1)
             {
-                return matrix[0, 0];
+                return fns[1](matrix);
             }
             else if (matrix.GetLength(0) == 2 && matrix.GetLength(1) == 2)
             {
-                return matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0];
+                return fns[2](matrix);
             }
 
             double? result = 0.0;
@@ -75,13 +107,9 @@ namespace ConsoleApp.linearAlgebra
 
         public override double Calculate(double[,] matrix)
         {
-            if(matrix.GetLength(0) != matrix.GetLength(1))
+            if(this.CheckMatrix(matrix, out Exception error))
             {
-                throw new Exception("Матрица не может быть не квадратной");
-            }
-            else if(matrix.GetLength(0) == 0)
-            {
-                throw new Exception("Empty matrix");
+                throw error;
             }
             
             return Processing(matrix) ?? 0xffffff;
@@ -92,29 +120,22 @@ namespace ConsoleApp.linearAlgebra
     {
         public override double Calculate(double[,] matrix)
         {
-            int length = matrix.GetLength(0);
-            if(length != matrix.GetLength(1))
+            if(this.CheckMatrix(matrix, out Exception error))
             {
-                throw new ArgumentException("Матрица должна быть квадратной.");
+                throw error;
             }
-            var fns = new Func<double[,], double>[4];
-
-            fns[0] = (double[,] _matrix) => throw new ArgumentException("Пустая матрица.");
-            fns[1] = (double[,] _matrix) => _matrix[0, 0];
-            fns[2] = (double[,] _matrix) => _matrix[0, 0] * _matrix[1, 1] - _matrix[0, 1] * _matrix[1, 0];
+            
             fns[3] = (double[,] _matrix) => {
                 double determinant = 0;
-                int fn_pointer;
                 for (int i = 0; i < _matrix.GetLength(0); i++)
                 {
-                    fn_pointer = _matrix.GetLength(0) - 1 > 3 ? 3 : _matrix.GetLength(0) - 1;
-                    determinant += Math.Pow(-1, i) * _matrix[0, i] * fns[fn_pointer](Deletion(_matrix, 0, i));
+                    determinant += Math.Pow(-1, i) * _matrix[0, i] * this.fns[this.GetFunctionPointer(_matrix.GetLength(0) - 1)](this.Deletion(_matrix, 0, i));
                 }
                 return determinant;
             };
 
             
-            return fns[length > 3 ? 3 : length](matrix);
+            return fns[this.GetFunctionPointer(matrix.GetLength(0))](matrix);
         }
     }
 
@@ -122,26 +143,22 @@ namespace ConsoleApp.linearAlgebra
     {
         public override double Calculate(double[,] matrix)
         {
-            int length = matrix.GetLength(0);
-            if (length != matrix.GetLength(1))
+            if(this.CheckMatrix(matrix, out Exception error))
             {
-                throw new ArgumentException("Матрица должна быть квадратной.");
+                throw error;
             }
-            Func<double[,], double>[] fns = new Func<double[,], double>[4];
-            fns[0] = (double[,] _matrix) => throw new ArgumentException("Пустая матрица.");
-            fns[1] = (double[,] _matrix) => _matrix[0, 0];
-            fns[2] = (double[,] _matrix) => _matrix[0, 0] * _matrix[1, 1] - _matrix[0, 1] * _matrix[1, 0];
+            
             fns[3] = (double[,] _matrix) =>
             {
                 double determinant = 0;
                 Parallel.For(0, _matrix.GetLength(0), i =>
                 {
-                    determinant += Math.Pow(-1, i) * _matrix[0, i] * Calculate(Deletion(_matrix, 0, i));
+                    determinant += Math.Pow(-1, i) * _matrix[0, i] * this.Calculate(this.Deletion(_matrix, 0, i));
                 });
                 return determinant;
             };
             
-            return fns[length > 3 ? 3 : length](matrix);
+            return fns[this.GetFunctionPointer(matrix.GetLength(0))](matrix);
         }
     }
 }
